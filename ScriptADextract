@@ -1,0 +1,24 @@
+# Récupération des utilisateurs Active Directory
+Get-ADUser -Filter * -Properties DisplayName, GivenName, Surname, SamAccountName, EmailAddress, Title, Enabled, whenCreated, AccountExpirationDate, LastLogonDate |
+Select-Object @{
+    Name = "Nom Affiché"; Expression = { $_.DisplayName -replace "`n|`r", " " }
+}, @{
+    Name = "Prénom"; Expression = { $_.GivenName -replace "`n|`r", " " }
+}, @{
+    Name = "Nom de Famille"; Expression = { $_.Surname -replace "`n|`r", " " }
+}, @{
+    Name = "Login AD"; Expression = { $_.SamAccountName -replace "`n|`r", " " }
+}, @{
+    Name = "Adresse Email"; Expression = { $_.EmailAddress -replace "`n|`r", " " }
+}, @{
+    Name = "Intitulé de Poste"; Expression = { $_.Title -replace "`n|`r", " " }
+}, @{
+    Name = "Compte Actif"; Expression = { if ($_.Enabled) { "Oui" } else { "Non" } }
+}, @{
+    Name = "Date de Création"; Expression = { $_.whenCreated }
+}, @{
+    Name = "Date d'Expiration du Compte"; Expression = { $_.AccountExpirationDate }
+}, @{
+    Name = "Dernière Connexion"; Expression = { $_.LastLogonDate }
+} |
+Export-Csv -Path "C:\Users\Administrateur\Desktop\AD_Export.csv" -NoTypeInformation -Encoding UTF8 -Delimiter ";"
